@@ -21,6 +21,8 @@ import androidx.core.util.Pair
 
 class ListHeroAdapter(private val listHero: ArrayList<Hero>) : RecyclerView.Adapter<ListHeroAdapter.ListViewHolder>() {
 
+
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ListViewHolder {
         val view: View = LayoutInflater.from(parent.context).inflate(R.layout.item_row_hero, parent, false)
         return ListViewHolder(view)
@@ -33,11 +35,21 @@ class ListHeroAdapter(private val listHero: ArrayList<Hero>) : RecyclerView.Adap
     override fun getItemCount(): Int = listHero.size
 
     class ListViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+
         private var imgPhoto: ImageView = itemView.findViewById(R.id.profileImageView)
         private var tvName: TextView = itemView.findViewById(R.id.nameTextView)
         private var tvDescription: TextView = itemView.findViewById(R.id.descTextView)
 
         fun bind(hero: Hero) {
+
+            val optionsCompat: ActivityOptionsCompat =
+                ActivityOptionsCompat.makeSceneTransitionAnimation(
+                    itemView.context as Activity,
+                    Pair(imgPhoto, "profile", ),
+                    Pair(tvName, "name"),
+                    Pair(tvDescription, "description"),
+                )
+
             Glide.with(itemView.context)
                 .load(hero.photo)
                 .circleCrop()
@@ -48,7 +60,8 @@ class ListHeroAdapter(private val listHero: ArrayList<Hero>) : RecyclerView.Adap
             itemView.setOnClickListener {
                 val intent = Intent(itemView.context, HeroActivity::class.java)
                 intent.putExtra("Hero", hero)
-                itemView.context.startActivity(intent)
+                itemView.context.startActivity(intent, optionsCompat.toBundle() )
+
             }
         }
     }
