@@ -1,17 +1,38 @@
 package com.dicoding.picodiploma.productdetail
 
+import android.content.Intent
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.Settings
 import android.view.WindowInsets
 import android.view.WindowManager
+import com.dicoding.picodiploma.productdetail.databinding.ActivityMainBinding
+
+
+
+
 
 class MainActivity : AppCompatActivity() {
+
+    private  lateinit var binding : ActivityMainBinding
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
         setupView()
+        setupAction()
+        setupData()
+    }
+
+    private fun setupAction() {
+        binding.settingImageView.setOnClickListener{
+            startActivity(Intent(Settings.ACTION_LOCALE_SETTINGS))
+        }
     }
 
     private fun setupView() {
@@ -26,4 +47,23 @@ class MainActivity : AppCompatActivity() {
         }
         supportActionBar?.hide()
     }
+
+    private fun setupData() {
+        val repository = RemoteDataSource(this)
+        val product = repository.getDetailProduct().apply {
+            binding.apply {
+                previewImageView.setImageResource(image)
+                nameTextView.text = name
+                storeTextView.text = store
+                colorTextView.text = color
+                sizeTextView.text = size
+                descTextView.text = desc
+                priceTextView.text = price
+                dateTextView.text = getString(R.string.dateFormat, date)
+                ratingTextView.text = getString(R.string.ratingFormat, rating.withNumberingFormat(), countRating.withNumberingFormat())
+
+            }
+        }
+    }
 }
+
